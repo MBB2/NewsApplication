@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">NewsApplicationMobile</string>
+
+    <string-array name="categories">
+        <item>Everything</item>
+        <item>Science</item>
+        <item>World</item>
+        <item>Politics</item>
+        <item>Education</item>
+        <item>Travel</item>
+        <item>Food</item>
+        <item>Culture</item>
+        <item>Environment</item>
+    </string-array>
+
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log; // Import for logging
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private NewsAdapter adapter;
     private Spinner spinnerCategory;
+    private String sc = "Everything";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,32 +35,38 @@ public class MainActivity extends AppCompatActivity {
         spinnerCategory = findViewById(R.id.spinnerCategory);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Setup Retrofit and API
-        NewsApi api = RetrofitClient.getInstance().create(NewsApi.class);
-
-        // Fetch default news on app launch
-        fetchNews(api, "everything");
-
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner categorySpinner = findViewById(R.id.spinnerCategory);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.categories, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String category = parent.getItemAtPosition(position).toString();
-                Log.d(TAG, "Category selected: " + category);
-                fetchNews(api, category);
+            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                sc = parent.getItemAtPosition(position).toString();
+                //fetchNews();
+                fetchNews(api, sc);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.d(TAG, "No category selected");
+
             }
+
+
+            // Setup Retrofit and API
+            NewsApi api = RetrofitClient.getInstance().create(NewsApi.class);
+
+            // Fetch default news on app launch
+
+
         });
     }
 
     private void fetchNews(NewsApi api, String category) {
         Log.d(TAG, "Fetching news for category: " + category);
 
-        Call<NewsResponse> call = api.getNews(category, "everything", "2024-11-15",  "bb7142f28f6e4a9fafed51939d47729f");
+        Call<NewsResponse> call = api.getNews(category, sc.toLowerCase(), "2024-11-15",  "bb7142f28f6e4a9fafed51939d47729f");
         Log.d(TAG, "API call URL: " + call.request().url());
 
         call.enqueue(new Callback<NewsResponse>() {
@@ -69,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "API Response: Success, Articles Count: " + articles.size());
                     adapter = new NewsAdapter(articles);
                     recyclerView.setAdapter(adapter);
+
                 } else {
                     Log.e(TAG, "API Response: Failed, Code: " + response.code() + ", Message: " + response.message());
                 }
@@ -81,4 +90,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-}
+    }
