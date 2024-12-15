@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
                 sc = parent.getItemAtPosition(position).toString();
-                //fetchNews();
+
                 fetchNews(api, sc);
             }
 
@@ -54,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            // Setup Retrofit and API
+
             NewsApi api = RetrofitClient.getInstance().create(NewsApi.class);
 
-            // Fetch default news on app launch
+
 
 
         });
